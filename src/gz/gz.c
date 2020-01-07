@@ -390,6 +390,7 @@ static void main_hook(void)
   /* execute and draw collision view */
   gz_col_view();
   gz_hit_view();
+  gz_guard_view();
 
   /* execute free camera in view mode */
   gz_free_view();
@@ -1084,6 +1085,7 @@ static void init(void)
   gz.timer_counter_prev = gz.cpu_counter;
   gz.col_view_state = COLVIEW_INACTIVE;
   gz.hit_view_state = HITVIEW_INACTIVE;
+  gz.guard_view_state = GUARDVIEW_INACTIVE;
   gz.hide_rooms = 0;
   gz.hide_actors = 0;
   gz.free_cam = 0;

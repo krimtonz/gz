@@ -41,6 +41,15 @@ enum hit_view_state
   HITVIEW_STOP,
 };
 
+enum guard_view_state
+{
+  GUARDVIEW_INACTIVE,
+  GUARDVIEW_START,
+  GUARDVIEW_ACTIVE,
+  GUARDVIEW_BEGIN_STOP,
+  GUARDVIEW_STOP,
+};
+
 enum cam_mode
 {
   CAMMODE_CAMERA,
@@ -171,6 +180,7 @@ struct gz
   int64_t               timer_counter_prev;
   int                   col_view_state;
   int                   hit_view_state;
+  int                   guard_view_state;
   _Bool                 hide_rooms;
   _Bool                 hide_actors;
   _Bool                 free_cam;
@@ -245,6 +255,7 @@ void          gz_vcont_get(int port, z64_input_t *input);
 
 void          gz_col_view(void);
 void          gz_hit_view(void);
+void          gz_guard_view(void);
 
 void          gz_update_cam(void);
 void          gz_free_view(void);
