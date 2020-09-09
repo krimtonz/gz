@@ -228,8 +228,8 @@ void gz_load_memfile(struct memory_file *file)
 
 void command_break(void)
 {
-  if (z64_game.event_flag != -1)
-    z64_game.event_flag = 0x0000;
+  if (z64_game.cameras[z64_game.active_cam_idx]->timer != -1)
+    z64_game.cameras[z64_game.active_cam_idx]->timer = 0x0000;
   if (z64_game.cutscene_state != 0x00)
     z64_game.cutscene_state = 0x03;
   if (z64_game.message_state_1 != 0x00) {
@@ -238,8 +238,9 @@ void command_break(void)
     z64_game.message_state_3 = 0x02;
   }
   if (settings->bits.break_type == SETTINGS_BREAK_AGGRESSIVE) {
-    z64_game.camera_mode = 0x0001;
-    z64_game.camera_flag_1 = 0x0000;
+    z64_game.main_camera.set = 0x0001;
+    z64_game.main_camera.anim_state = 0x0000;
+    z64_game.active_cam_idx = 0;
     z64_link.state_flags_1 = 0x00000000;
     z64_link.state_flags_2 = 0x00000000;
     if (z64_link.action != 0x00)

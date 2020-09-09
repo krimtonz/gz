@@ -973,9 +973,9 @@ HOOK void guPerspectiveF_hook(MtxF *mf)
   mf->ww = 1.f;
 }
 
-HOOK void camera_hook(void *camera)
+HOOK int camera_hook(z64_camera_t *camera)
 {
-  void (*camera_func)(void *camera);
+  int32_t (*camera_func)(z64_camera_t *camera);
   __asm__ volatile ("sw      $t9, %[camera_func]"
                     : [camera_func] "=m"(camera_func));
 
@@ -984,14 +984,11 @@ HOOK void camera_hook(void *camera)
 
   gz_update_cam();
 
-  z64_xyzf_t *camera_at = (void*)((char*)camera + 0x0050);
-  z64_xyzf_t *camera_eye = (void*)((char*)camera + 0x005C);
-
-  *camera_eye = gz.cam_pos;
+  camera->eye = gz.cam_pos;
 
   z64_xyzf_t vf;
   vec3f_py(&vf, gz.cam_pitch, gz.cam_yaw);
-  vec3f_add(camera_at, camera_eye, &vf);
+  vec3f_add(&camera->at, &camera->eye, &vf);
 }
 
 static void main_return_proc(struct menu_item *item, void *data)

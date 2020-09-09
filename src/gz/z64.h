@@ -276,7 +276,7 @@ typedef struct
   /* segment address of z64_camera_params_t */
   uint32_t          seg_params;               /* 0x0004 */
                                               /* 0x0008 */
-} z64_camera_t;
+} z64_col_camera_t;
 
 typedef struct
 {
@@ -307,7 +307,7 @@ typedef struct
   char              pad_0x16[0x0002];         /* 0x0016 */
   z64_col_poly_t   *poly;                     /* 0x0018 */
   z64_col_type_t   *type;                     /* 0x001C */
-  z64_camera_t     *camera;                   /* 0x0020 */
+  z64_col_camera_t *camera;                   /* 0x0020 */
   uint16_t          n_water;                  /* 0x0024 */
   char              pad_0x26[0x0002];         /* 0x0026 */
   z64_col_water_t  *water;                    /* 0x0028 */
@@ -1461,6 +1461,83 @@ typedef struct
                                               /* 0x02B4 */
 } z64_pause_ctxt_t;
 
+typedef struct z64_game_s z64_game_t;
+
+typedef struct {
+  char data[0x50];
+  z64_xyzf_t    at;                   /* 0x0050 */
+  z64_xyzf_t    eye;                  /* 0x005C */
+  z64_xyzf_t    up;                   /* 0x0068 */
+  z64_xyzf_t    eye_next;             /* 0x0074 */
+  z64_xyzf_t    sky_offset;           /* 0x0080 */
+  z64_game_t   *game;                 /* 0x008C */
+  z64_link_t   *player;               /* 0x0090 */
+  struct {
+    z64_xyzf_t    pos;                /* 0x0094 */
+    z64_xyz_t     rot;                /* 0x00A0 */
+  }             player_posrot;
+  z64_actor_t  *target;               /* 0x00A8 */
+  struct {
+    z64_xyzf_t    pos;                /* 0x00AC */
+    z64_xyz_t     rot;                /* 0x00B8 */
+  }             target_posrot;
+  float         unk_0xC0;             /* 0x00C0 */
+  float         unk_0xC4;             /* 0x00C4 */
+  float         unk_0xC8;             /* 0x00C8 */
+  float         unk_0xCC;             /* 0x00CC */
+  float         unk_0xD0;             /* 0x00D0 */
+  float         unk_0xD4;             /* 0x00D4 */
+  float         xz_speed;             /* 0x00D8 */
+  float         dist;                 /* 0x00DC */
+  float         speed_ratio;          /* 0x00E0 */
+  z64_xyzf_t    pos_offset;           /* 0x00E4 */
+  z64_xyzf_t    player_pos_delta;     /* 0x00F0 */
+  float         fov;                  /* 0x00FC */
+  float         unk_0x100;            /* 0x0100 */
+  float         player_ground_y;      /* 0x0104 */
+  z64_xyzf_t    ground_norm;          /* 0x0108 */
+  float         water_y;              /* 0x0114 */
+  int32_t       water_prev_cam_uid;   /* 0x0118 */
+  int32_t       water_prev_set;       /* 0x011C */
+  int32_t       water_quake_id;       /* 0x0120 */
+  void         *cs_at_points;         /* 0x0124 */
+  union {
+    void         *cs_eye_points;
+    struct {
+      int16_t       unk_0x128;
+      int16_t       unk_sfx_0x12A;
+    };
+  };                                  /* 0x0128 */
+  int16_t       unk_0x12C;            /* 0x012C */
+  int16_t       unk_0x12E;            /* 0x012E */
+  int16_t       uid;                  /* 0x0130 */
+  char          unk_0x132[0x2];       /* 0x0132 */
+  z64_xyz_t     inp_dir;              /* 0x0134 */
+  z64_xyz_t     cam_dir;              /* 0x013A */
+  int16_t       status;               /* 0x0140 */
+  int16_t       set;                  /* 0x0142 */
+  int16_t       mode;                 /* 0x0144 */
+  int16_t       bg_col_idx;           /* 0x0146 */
+  int16_t       scene_data_idx;       /* 0x0148 */
+  int16_t       unk_0x14A;            /* 0x014A */
+  int16_t       upd_params;           /* 0x014C */
+  int16_t       child_cam_idx;        /* 0x014E */
+  int16_t       unk_0x150;            /* 0x0150 */
+  int16_t       unk_0x152;            /* 0x0152 */
+  int16_t       prev_set;             /* 0x0154 */
+  int16_t       next_scene_data_idx;  /* 0x0156 */
+  int16_t       next_bg_chk_idx;      /* 0x0158 */
+  z64_angle_t   cant;                 /* 0x015A */
+  int16_t       param_flags;          /* 0x015C */
+  int16_t       anim_state;           /* 0x015E */
+  int16_t       timer;                /* 0x0160 */
+  int16_t       parent_idx;           /* 0x0162 */
+  int16_t       this_idx;             /* 0x0164 */
+  int16_t       prev_scene_idx;       /* 0x0166 */
+  int16_t       unk_0x168;            /* 0x0168 */
+  int16_t       unk_0x16A;            /* 0x016A */
+} z64_camera_t;                       /* 0x016C */
+
 /* lighting structs */
 typedef struct
 {
@@ -1535,7 +1612,7 @@ typedef void (*z64_light_handler_t)(z64_gbi_lights_t*, z64_lightn_t*,
                                     z64_actor_t*);
 
 /* game context */
-typedef struct
+struct z64_game_s
 {
   z64_ctxt_t        common;                   /* 0x00000 */
   uint16_t          scene_index;              /* 0x000A4 */
@@ -1550,15 +1627,12 @@ typedef struct
   float             fog_distance;             /* 0x000D4 */
   float             z_distance;               /* 0x000D8 */
   float             unk_0xDC;                 /* 0x000DC */
-  char              unk_0xE0[0x0190];         /* 0x000E0 */
-  z64_actor_t      *camera_focus;             /* 0x00270 */
-  char              unk_0x274[0x00AE];        /* 0x00274 */
-  uint16_t          camera_mode;              /* 0x00322 */
-  char              unk_0x324[0x001A];        /* 0x00324 */
-  uint16_t          camera_flag_1;            /* 0x0033E */
-  char              unk_0x340[0x016C];        /* 0x00340 */
-  int16_t           event_flag;               /* 0x004AC */
-  char              unk_0x4AE[0x02F6];        /* 0x004AE */
+  char              unk_0xE0[0x0100];         /* 0x000E0 */
+  z64_camera_t      main_camera;              /* 0x001E0 */
+  z64_camera_t      sub_cameras[3];           /* 0x0034C */
+  z64_camera_t     *cameras[4];               /* 0x00790 */
+  int16_t           active_cam_idx;           /* 0x007A0 */
+  int16_t           next_cam_idx;             /* 0x007A2 */
   uint8_t           seq_idx;                  /* 0x007A4 */
   uint8_t           night_sfx;                /* 0x007A5 */
   char              unk_0x7A6[0x0002];        /* 0x007A6 */
@@ -1653,7 +1727,7 @@ typedef struct
   z64_hit_ctxt_t    hit_ctxt;                 /* 0x11E60 */
   char              unk_0x120EC[0x042C];      /* 0x120EC */
                                               /* 0x12518 */
-} z64_game_t;
+};
 
 typedef void (*z64_scene_config_t)(z64_game_t *game);
 
